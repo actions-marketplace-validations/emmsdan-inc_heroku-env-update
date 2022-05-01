@@ -20,6 +20,10 @@ inputs:
     description: "The branch that you would like to deploy to Heroku"
     default: "HEAD"
     required: false
+  usesshgit:
+    description: "Set this to true if you want to use --ssh-git when push branches"
+    default: "false"
+    required: false
   dontuseforce:
     description: "Set this to true if you don't want to use --force when switching branches"
     default: "false"

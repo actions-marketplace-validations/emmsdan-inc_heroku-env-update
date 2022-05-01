@@ -16,9 +16,10 @@ machine git.heroku.com
     password ${api_key}
 EOF`;
 
-const addRemote = ({ app_name, dontautocreate, buildpack, region, team, stack }) => {
+const addRemote = ({ app_name, usesshgit, dontautocreate, buildpack, region, team, stack }) => {
   try {
-    execSync("heroku git:remote --ssh-git --app " + app_name);
+    const sshGit = usesshgit ? "--ssh-git" : "";
+    execSync(`heroku git:remote ${sshGit} --app ${app_name}`);
     console.log("Added git remote heroku");
   } catch (err) {
     if (dontautocreate) throw err;
@@ -134,6 +135,7 @@ let heroku = {
   app_name: core.getInput("heroku_app_name"),
   buildpack: core.getInput("buildpack"),
   branch: core.getInput("branch"),
+  usesshgit: core.getInput("usesshgit") === "false" ? false : true,
   dontuseforce: core.getInput("dontuseforce") === "false" ? false : true,
   dontautocreate: core.getInput("dontautocreate") === "false" ? false : true,
   usedocker: core.getInput("usedocker") === "false" ? false : true,
