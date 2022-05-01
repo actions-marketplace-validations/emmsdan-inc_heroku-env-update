@@ -14,6 +14,9 @@ machine api.heroku.com
 machine git.heroku.com
     login ${email}
     password ${api_key}
+machine heroku.com
+    login ${email}
+    password ${api_key}
 EOF`;
 
 const addRemote = ({ app_name, usesshgit, dontautocreate, buildpack, region, team, stack }) => {
