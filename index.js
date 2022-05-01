@@ -18,7 +18,7 @@ EOF`;
 
 const addRemote = ({ app_name, dontautocreate, buildpack, region, team, stack }) => {
   try {
-    execSync("heroku git:remote --app " + app_name);
+    execSync("heroku git:remote --ssh-git --app " + app_name);
     console.log("Added git remote heroku");
   } catch (err) {
     if (dontautocreate) throw err;
@@ -221,15 +221,9 @@ if (heroku.dockerBuildArgs) {
     addConfig(heroku);
 
     try {
-      deploy({ ...heroku, dontuseforce: true });
-    } catch (err) {
-      console.error(`
-            Unable to push branch because the branch is behind the deployed branch. Using --force to deploy branch. 
-            (If you want to avoid this, set dontuseforce to 1 in with: of .github/workflows/action.yml. 
-            Specifically, the error was: ${err}
-        `);
-
       deploy(heroku);
+    } catch (err) {
+      console.error(err);
     }
 
     if (heroku.healthcheck) {
