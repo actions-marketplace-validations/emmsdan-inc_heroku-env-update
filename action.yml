@@ -1,4 +1,4 @@
-name: "Heroku Deploy"
+name: "Deploy to Heroku Action"
 description: "Deploy an app to Heroku"
 branding:
   icon: "upload-cloud"
