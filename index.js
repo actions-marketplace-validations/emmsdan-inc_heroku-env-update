@@ -152,7 +152,7 @@ let heroku = {
   rollbackonhealthcheckfailed:
     core.getInput("rollbackonhealthcheckfailed") === "false" ? false : true,
   env_file: core.getInput("env_file"),
-  justlogin: core.getInput("justlogin") === "false" ? false : true,
+  justlogin: core.getInput("justlogin") === "false" ? false : false,
   region: core.getInput("region"),
   stack: core.getInput("stack"),
   team: core.getInput("team"),
@@ -182,9 +182,11 @@ if (heroku.dockerBuildArgs) {
 
 (async () => {
   // Program logic
+  console.log ("Logging in to Heroku");
   try {
     // Just Login
     if (heroku.justlogin) {
+    console.log ("Creating Heroku App");
       execSync(createCatFile(heroku));
       console.log("Created and wrote to ~/.netrc");
 
@@ -225,6 +227,8 @@ if (heroku.dockerBuildArgs) {
 
     addRemote(heroku);
     addConfig(heroku);
+    
+    console.log("Successfully added heroku remote and config");
 
     if (!heroku.donotdeploy) {
       try {
@@ -261,6 +265,7 @@ if (heroku.dockerBuildArgs) {
       "Successfully updated heroku app from branch " + heroku.branch
     );
   } catch (err) {
+    console.log(err)
     if (
       heroku.dontautocreate &&
       err.toString().includes("Couldn't find that app")
@@ -273,4 +278,13 @@ if (heroku.dockerBuildArgs) {
       core.setFailed(err.toString());
     }
   }
-})();
+})().then(console.log);
+
+function freeze(time) {
+  const stop = new Date().getTime() + time;
+  while(new Date().getTime() < stop);
+}
+
+console.log("freeze 5s");
+freeze(5000);
+console.log("done");
