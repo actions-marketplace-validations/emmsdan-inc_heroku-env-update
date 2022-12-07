@@ -156,6 +156,7 @@ let heroku = {
   region: core.getInput("region"),
   stack: core.getInput("stack"),
   team: core.getInput("team"),
+  donotdeploy: core.getInput("donotdeploy") === "false" ? false : true
 };
 
 // Formatting
@@ -225,12 +226,13 @@ if (heroku.dockerBuildArgs) {
     addRemote(heroku);
     addConfig(heroku);
 
-    try {
-      deploy(heroku);
-    } catch (err) {
-      console.error(err);
+    if (!heroku.donotdeploy) {
+      try {
+        deploy(heroku);
+      } catch (err) {
+        console.error(err);
+      }
     }
-
     if (heroku.healthcheck) {
       if (typeof heroku.delay === "number" && heroku.delay !== NaN) {
         await sleep(heroku.delay * 1000);
@@ -256,7 +258,7 @@ if (heroku.dockerBuildArgs) {
 
     core.setOutput(
       "status",
-      "Successfully deployed heroku app from branch " + heroku.branch
+      "Successfully updated heroku app from branch " + heroku.branch
     );
   } catch (err) {
     if (
@@ -265,7 +267,7 @@ if (heroku.dockerBuildArgs) {
     ) {
       core.setOutput(
         "status",
-        "Skipped deploy to heroku app from branch " + heroku.branch
+        "Skipped update to heroku app from branch " + heroku.branch
       );
     } else {
       core.setFailed(err.toString());

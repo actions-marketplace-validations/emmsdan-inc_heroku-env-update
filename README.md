@@ -102,6 +102,7 @@ The action comes with additional options that you can use to configure your proj
 | region                      | false    | The region in which you would like to deploy a server                                                                                                                                               | eu or dublin                                          |
 | stack                       | false    | Set stack of your heroku app if you need to change. Default: heroku-20                                                                                                                              | container                                             |
 | team                        | false    | If deploying to an organization, then specify the name of the team or organization here                                                                                                             | team-xyz                                              |
+| donotdeploy                        | true    | Action should not deploy this changes to heroku. Use this if you want to just update only the env here                                                                                                             | true or false                                              |
 
 ## Examples
 
@@ -521,6 +522,34 @@ There are two important points to keep in mind when using the **env_file** optio
    (For those of you who are wondering why this is the case, when using the **env** option, the env variables are passed directly into the process along with all the other env variables passed by GitHub Actions, the language you are using etc and the "HD\_" in that case is to help differentiate your env variables from them. But when using a file to pass the env variables, the action manually reads the file so there is no chance of stray env variables being passed by your language, github actions etc and hence no need to add the "HD\_")
 
 Also note that using a file (which can be named anything so long as it follows the format of a standard env file) can be useful if you're trying to send a very large number of env variables to Heroku, it does mean that keeping the .env file secure and private is entirely in your hands so tread with caution.
+
+### Do not deploy
+
+You can if you wish only update the environment variable without pushing code to heroku set this to true
+
+_.github/workflows/main.yml_
+
+```yaml
+name: Deploy
+
+on:
+  push:
+    branches:
+      - master # Changing the branch here would also work
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: see/heroku-deploy@master # This is the action
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: "YOUR APP's NAME" #Must be unique in Heroku
+          heroku_email: "YOUR EMAIL"
+          donotdeploy: true #this option
+          env_file: ".env"
+```
 
 ## Procfile Passing
 
